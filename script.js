@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Create new file by default
     createNewFile();
+    
+    // Show initial connection status
+    showMessage('📊 Inventory Management System Ready! Load ISSUES.xlsx or create new file.', 'info');
 });
 
 // Handle Excel file selection
@@ -258,6 +261,9 @@ function showMessage(message, type) {
     // Create new message
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message';
+    const backgroundColor = type === 'success' ? '#28a745' : 
+                           type === 'info' ? '#17a2b8' : '#dc3545';
+    
     messageDiv.style.cssText = `
         position: fixed;
         top: 20px;
@@ -267,7 +273,7 @@ function showMessage(message, type) {
         color: white;
         font-weight: bold;
         z-index: 1000;
-        ${type === 'success' ? 'background-color: #28a745;' : 'background-color: #dc3545;'}
+        background-color: ${backgroundColor};
     `;
     messageDiv.textContent = message;
     
