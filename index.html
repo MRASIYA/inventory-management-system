@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📦 Inventory Management System</h1>
+            <p>Manage your material inventory with Issues, Receipts, and Returns</p>
+        </header>
+
+        <div class="form-section">
+            <h2>Add Transaction</h2>
+            <form id="inventoryForm">
+                <div class="form-group">
+                    <label for="materialName">Material Name:</label>
+                    <input type="text" id="materialName" name="materialName" required 
+                           placeholder="Enter material name" list="materialList">
+                    <datalist id="materialList">
+                        <!-- Dynamic material suggestions will be added here -->
+                    </datalist>
+                </div>
+
+                <div class="form-group">
+                    <label for="transactionType">Transaction Type:</label>
+                    <select id="transactionType" name="transactionType" required>
+                        <option value="">Select transaction type</option>
+                        <option value="Issued">Issued</option>
+                        <option value="Received">Received</option>
+                        <option value="Return">Return</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" name="quantity" required 
+                           placeholder="Enter quantity" min="1" step="1">
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <button type="submit">Add Transaction</button>
+            </form>
+        </div>
+
+        <div class="file-section">
+            <h2>Excel File Management</h2>
+            <div class="file-controls">
+                <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                <button onclick="document.getElementById('fileInput').click()">
+                    📁 Load ISSUES.xlsx
+                </button>
+                <button id="downloadBtn" onclick="downloadExcel()">
+                    💾 Download Updated File
+                </button>
+                <button id="createNewBtn" onclick="createNewFile()">
+                    📄 Create New File
+                </button>
+            </div>
+        </div>
+
+        <div class="data-section">
+            <h2>Current Inventory Data</h2>
+            <div id="dataDisplay">
+                <p>Load an Excel file or create a new one to see inventory data</p>
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <h2>Inventory Summary</h2>
+            <div id="summaryDisplay">
+                <p>Summary will appear here after loading data</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
