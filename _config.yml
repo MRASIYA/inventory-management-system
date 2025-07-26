@@ -1,0 +1,73 @@
+# Jekyll Configuration for GitHub Pages
+
+# Site settings
+title: "Inventory Management System"
+description: "A comprehensive inventory management system with web interface and Excel integration"
+author: "MRASIYA"
+url: "https://MRASIYA.github.io"
+baseurl: "/inventory-management-system"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude files from Jekyll processing
+exclude:
+  - venv/
+  - __pycache__/
+  - .env
+  - requirements.txt
+  - Dockerfile
+  - build.ps1
+  - backups/
+  - "*.pyc"
+  - app.py
+  - create_sample_excel.py
+  - app.log
+  - ISSUES.xlsx
+  - templates/
+  - static/
+  - .git/
+  - .gitignore
+  - README.md
+
+# Include files
+include:
+  - _pages
+
+# Collections
+collections:
+  pages:
+    output: true
+    permalink: /:name/
+
+# Default layouts
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+# SEO settings
+twitter:
+  username: MRASIYA
+
+social:
+  name: MRASIYA
+  links:
+    - https://github.com/MRASIYA
+
+# Analytics (uncomment and add your tracking ID)
+# google_analytics: UA-NNNNNNNN-N
