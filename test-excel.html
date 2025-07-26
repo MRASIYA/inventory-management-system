@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Connection Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        #result { margin: 20px 0; padding: 10px; background: #f9f9f9; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Excel Connection Test</h1>
+        
+        <div>
+            <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+            <button onclick="document.getElementById('fileInput').click()">📁 Load ISSUES.xlsx</button>
+            <button onclick="testConnection()">🔧 Test Connection</button>
+            <button onclick="addTestData()">➕ Add Test Data</button>
+            <button onclick="downloadFile()">💾 Download Updated File</button>
+        </div>
+
+        <div id="result"></div>
+        
+        <div id="dataDisplay"></div>
+    </div>
+
+    <script>
+        let workbook = null;
+        let currentData = [];
+
+        document.getElementById('fileInput').addEventListener('change', handleFileLoad);
+
+        function handleFileLoad(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        workbook = XLSX.read(e.target.result, {type: 'binary'});
+                        loadData();
+                        showResult('✅ File loaded successfully!', 'success');
+                    } catch (error) {
+                        showResult('❌ Error loading file: ' + error.message, 'error');
+                    }
+                };
+                reader.readAsBinaryString(file);
+            }
+        }
+
+        function loadData() {
+            if (workbook && workbook.SheetNames.includes('Sheet1')) {
+                const worksheet = workbook.Sheets['Sheet1'];
+                currentData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                displayData();
+                showResult(`📊 Loaded ${currentData.length - 1} rows of data`, 'info');
+            }
+        }
+
+        function displayData() {
+            const display = document.getElementById('dataDisplay');
+            if (currentData.length === 0) {
+                display.innerHTML = '<p>No data loaded</p>';
+                return;
+            }
+
+            let html = '<h3>Current Data:</h3><table>';
+            currentData.forEach((row, index) => {
+                html += '<tr>';
+                row.forEach(cell => {
+                    const tag = index === 0 ? 'th' : 'td';
+                    html += `<${tag}>${cell || ''}</${tag}>`;
+                });
+                html += '</tr>';
+            });
+            html += '</table>';
+            display.innerHTML = html;
+        }
+
+        function testConnection() {
+            if (!workbook) {
+                showResult('❌ No file loaded. Please load ISSUES.xlsx first.', 'error');
+                return;
+            }
+
+            const sheetNames = workbook.SheetNames;
+            const hasSheet1 = sheetNames.includes('Sheet1');
+            
+            let result = '🔍 Connection Test Results:\n';
+            result += `📋 Sheet Names: ${sheetNames.join(', ')}\n`;
+            result += `✅ Has Sheet1: ${hasSheet1}\n`;
+            result += `📊 Data Rows: ${currentData.length}\n`;
+            
+            if (currentData.length > 0) {
+                result += `📋 Columns: ${currentData[0].join(', ')}\n`;
+            }
+            
+            showResult(result, 'info');
+        }
+
+        function addTestData() {
+            if (!workbook) {
+                createNewWorkbook();
+            }
+
+            // Add test transaction
+            const newRow = ['Test Material', new Date().toISOString().split('T')[0], 10, 20, 2, 12];
+            
+            if (currentData.length === 0) {
+                currentData = [
+                    ['Material Name', 'Date', 'Issued', 'Received', 'Return', 'Balance'],
+                    newRow
+                ];
+            } else {
+                currentData.push(newRow);
+            }
+
+            // Update worksheet
+            const worksheet = XLSX.utils.aoa_to_sheet(currentData);
+            workbook.Sheets['Sheet1'] = worksheet;
+            
+            displayData();
+            showResult('✅ Test data added successfully!', 'success');
+        }
+
+        function createNewWorkbook() {
+            workbook = XLSX.utils.book_new();
+            currentData = [['Material Name', 'Date', 'Issued', 'Received', 'Return', 'Balance']];
+            const worksheet = XLSX.utils.aoa_to_sheet(currentData);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+            showResult('📄 New workbook created', 'info');
+        }
+
+        function downloadFile() {
+            if (!workbook) {
+                showResult('❌ No data to download', 'error');
+                return;
+            }
+            
+            XLSX.writeFile(workbook, 'ISSUES_updated.xlsx');
+            showResult('💾 File downloaded as ISSUES_updated.xlsx', 'success');
+        }
+
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            const colors = {
+                success: '#d4edda',
+                error: '#f8d7da',
+                info: '#d1ecf1'
+            };
+            
+            result.style.backgroundColor = colors[type] || '#f9f9f9';
+            result.innerHTML = message.replace(/\n/g, '<br>');
+        }
+
+        // Auto-load the ISSUES.xlsx file if it exists
+        window.onload = function() {
+            showResult('🚀 Excel Connection Test Ready!\n📁 Load your ISSUES.xlsx file to test the connection.', 'info');
+        };
+    </script>
+</body>
+</html>
